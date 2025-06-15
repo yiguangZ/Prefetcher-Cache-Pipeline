@@ -58,24 +58,26 @@ Advanced Cache: critical-word-first fetch
 
 Advanced + Prefetcher: critical-word-first with 1-block prefetching
 
-Example Results (for provided test programs):
-Configuration	Cache Miss Rate	CPI
-Baseline	~X%	~Y
-Advanced	~X% ↓	~Y ↓
-Advanced + Prefetch	~X% ↓↓	~Y ↓↓
+ Results (for provided test programs):
+Configuration	Cache Miss Rate
+Baseline	          2.749%
+Advanced	          2.4% ↓
+Advanced + Prefetch	1.77% ↓
 
 (Update the X/Y values with your actual results if desired)
 
 🧩 Files
-ucsbece154b_imem.v – Instruction cache and controller
+ucsbece154b_imem.v – Instruction cache
 
-ucsbece154b_emm_sdram.v – SDRAM main memory emulator
+ucsbece154b_cache.v – Instruction cache controller
 
 ucsbece154b_controller.v – Pipeline control logic
 
 ucsbece154b_datapath.v – Top-level RISC-V datapath
 
 ucsbece154b_top_tb.v – Testbench with miss/cycle counters
+
+ucsbece154b_branchpredictor.v Branch predictor module
 
 README.md – This file
 
