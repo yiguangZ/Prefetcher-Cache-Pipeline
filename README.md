@@ -50,7 +50,7 @@ Combined BTB (Branch Target Buffer) and GHR (Global History Register) mechanism
 Integrated into fetch stage for pipeline hazard reduction
 
 📊 Performance Metrics
-Miss rate and CPI are instrumented and evaluated across three configurations:
+Miss rate is evaluated across three configurations:
 
 Baseline Cache: full-block fetch, no optimization
 
@@ -64,7 +64,6 @@ Baseline	          2.749%
 Advanced	          2.4% ↓
 Advanced + Prefetch	1.77% ↓
 
-(Update the X/Y values with your actual results if desired)
 
 🧩 Files
 ucsbece154b_imem.v – Instruction cache
