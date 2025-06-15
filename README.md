@@ -1,68 +1,104 @@
+🧠 RISC-V Processor with Branch Predictor and Instruction Cache (UCSB ECE 154B)
+This project implements a 5-stage pipelined RISC-V processor enhanced with:
 
-# RISC-V Singlecycle CPU Starter Code
+Dynamic Branch Prediction (BTB + GHR-based)
 
+4-Way Set-Associative Instruction Cache (Random Replacement)
 
-## Guide to Run ECI ModelSim
+Critical-Word-First Cache Fetching
 
-1. Download this directory to ECI.
-2. `cd` to the downloaded directory using a terminal.
-3. Open a terminal and cd to your ECI directory.
-4. Run `make run-gui` to compile your design and open ModelSim
-5. Run simulations as normal.
+Hardware Prefetcher for Improved Miss Penalty
 
-Note that you may have to add this to your `"~/.bashrc"`:
+Miss Rate Instrumentation and Performance Analysis
 
-```bash
-# ModelSim
-export MODEL_TECH=/ece/mentor/ModelSimSE-10.7d/modeltech/bin
-export PATH=$PATH:$MODEL_TECH
-export LM_LICENSE_FILE=1717@license.ece.ucsb.edu
-```
+Designed and tested for the ECE 154B: Advanced Computer Architecture course at UC Santa Barbara.
 
-## Implementation Hints
+🚀 Features
+✅ Pipeline Architecture
+Standard 5-stage RISC-V pipeline: Fetch → Decode → Execute → Memory → Writeback
 
-Use the following Verilog snippets to generate the specified hardware. You can see how the Verilog is synthesized into a netlist with this website: <https://digitaljs.tilk.eu/>.
+Data hazard detection and stall/forwarding logic
 
-### 2-Input Muxes
+Dual-issue support to improve instruction throughput (optional)
 
-```verilog
-// http://www.asic-world.com/verilog/operators2.html#Conditional_Operators
-assign y = (s) ? (a) : (b);
+✅ Instruction Cache (L1)
+4-way set-associative cache with random replacement policy (RRP)
 
-// http://www.asic-world.com/verilog/vbehave2.html#The_Conditional_Statement_if-else
-always @ * begin
-    y = b;
-    if (s)
-        y = a;
-end
+Parameterized sets and block size (default: 8 sets × 4 words per block = 512B total)
 
-// http://www.asic-world.com/verilog/vbehave2.html#The_Case_Statement
-always @ * begin
-    case (s)
-        0: y = a;
-        1: y = b;
-        default: ;
-    endcase
-end
-```
+Synchronous read/write interface (for efficient synthesis as BRAM)
 
-### N-Input Muxes
+✅ Advanced Cache Controller
+Critical-word-first + early restart mechanism:
 
-```verilog
-assign y
-    = (s==0) ? a
-    : (s==1) ? b
-    ....
-    : (s=={n}) ? {value}
-    : x;
+Fetches only the needed word first to reduce stall time
 
-always @ * begin
-    case (s)
-        0: y = a;
-        1: y = b;
-        ....
-        {n}: y = {value};
-        default: y = x;
-    endcase
-end
-```
+Streams the rest of the block afterward while resuming execution
+
+✅ Hardware Prefetcher
+Automatically prefetches the next block (A+1) upon a cache miss at address A
+
+One-block prefetch buffer checked in parallel with L1 cache
+
+Prefetched blocks written into L1 cache on use; buffer updated dynamically
+
+✅ Branch Prediction
+Combined BTB (Branch Target Buffer) and GHR (Global History Register) mechanism
+
+2-bit saturating counters used to make dynamic predictions
+
+Integrated into fetch stage for pipeline hazard reduction
+
+📊 Performance Metrics
+Miss rate and CPI are instrumented and evaluated across three configurations:
+
+Baseline Cache: full-block fetch, no optimization
+
+Advanced Cache: critical-word-first fetch
+
+Advanced + Prefetcher: critical-word-first with 1-block prefetching
+
+Example Results (for provided test programs):
+Configuration	Cache Miss Rate	CPI
+Baseline	~X%	~Y
+Advanced	~X% ↓	~Y ↓
+Advanced + Prefetch	~X% ↓↓	~Y ↓↓
+
+(Update the X/Y values with your actual results if desired)
+
+🧩 Files
+ucsbece154b_imem.v – Instruction cache and controller
+
+ucsbece154b_emm_sdram.v – SDRAM main memory emulator
+
+ucsbece154b_controller.v – Pipeline control logic
+
+ucsbece154b_datapath.v – Top-level RISC-V datapath
+
+ucsbece154b_top_tb.v – Testbench with miss/cycle counters
+
+README.md – This file
+
+🛠️ Tools & Technologies
+Verilog HDL
+
+ModelSim / Vivado for simulation and waveform analysis
+
+Custom cycle-level testbench for performance evaluation
+
+🧠 Lessons Learned
+Designing realistic memory hierarchies with performance trade-offs
+
+Implementing and testing non-blocking cache fetch mechanisms
+
+Integrating speculative execution via branch prediction
+
+Balancing complexity vs performance in hardware design
+
+📚 References
+UCSB ECE 154B Lab Docs
+
+Rocket Core Memory Hierarchy Insights
+
+Caches and Prefetching in Computer Architecture (Hennessy & Patterson)
+
